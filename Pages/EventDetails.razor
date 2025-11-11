@@ -1,0 +1,34 @@
+@page "/event/{name}"
+@using EventEase.Models
+
+@if (Event is not null)
+{
+    <h2>Event Details</h2>
+    <p><strong>Name:</strong> @Event.Name</p>
+    <p><strong>Date:</strong> @Event.Date.ToShortDateString()</p>
+    <p><strong>Location:</strong> @Event.Location</p>
+}
+else
+{
+    <div class="alert alert-danger">Event not found.</div>
+}
+
+@code {
+    [Parameter]
+    public string Name { get; set; } = string.Empty;
+
+    private EventModel? Event;
+
+    protected override void OnInitialized()
+    {
+        var allEvents = GetMockEvents();
+        Event = allEvents.FirstOrDefault(e => e.Name.Equals(Name, StringComparison.OrdinalIgnoreCase));
+    }
+
+    private List<EventModel> GetMockEvents() => new()
+    {
+        new EventModel { Name = "Tech Summit 2025", Date = new DateTime(2025, 12, 5), Location = "New York" },
+        new EventModel { Name = "Marketing Expo", Date = new DateTime(2025, 12, 12), Location = "Chicago" },
+        new EventModel { Name = "Startup Pitch Night", Date = new DateTime(2025, 12, 20), Location = "San Francisco" }
+    };
+}

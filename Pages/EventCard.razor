@@ -1,0 +1,24 @@
+@using EventEase.Models
+
+@if (Event is not null && IsValidEvent(Event))
+{
+    <div class="card m-3 p-3 border shadow-sm">
+        <h3>@Event.Name</h3>
+        <p><strong>Date:</strong> @Event.Date.ToShortDateString()</p>
+        <p><strong>Location:</strong> @Event.Location</p>
+    </div>
+}
+else
+{
+    <div class="alert alert-warning">Invalid event data.</div>
+}
+
+@code {
+    [Parameter]
+    public EventModel? Event { get; set; }
+
+    private bool IsValidEvent(EventModel evt) =>
+        !string.IsNullOrWhiteSpace(evt.Name)
+        && evt.Date != default
+        && !string.IsNullOrWhiteSpace(evt.Location);
+}

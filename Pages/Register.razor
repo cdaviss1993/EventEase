@@ -1,0 +1,56 @@
+@page "/register"
+@using System.ComponentModel.DataAnnotations
+@inject EventEase.Services.UserSessionService Session
+@inject EventEase.Services.AttendanceService Attendance
+
+
+<h2>Register for Event</h2>
+
+<EditForm Model="@registration" OnValidSubmit="HandleValidSubmit">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div class="mb-3">
+        <label>Name:</label>
+        <InputText @bind-Value="registration.Name" class="form-control" />
+        <ValidationMessage For="@(() => registration.Name)" />
+    </div>
+
+    <div class="mb-3">
+        <label>Email:</label>
+        <InputText @bind-Value="registration.Email" class="form-control" />
+        <ValidationMessage For="@(() => registration.Email)" />
+    </div>
+
+    <button type="submit" class="btn btn-primary">Register</button>
+</EditForm>
+
+@if (submitted)
+{
+    <div class="alert alert-success mt-3">Thanks for registering, @registration.Name!</div>
+}
+
+@code {
+    private RegistrationModel registration = new();
+    private bool submitted = false;
+
+    private void HandleValidSubmit()
+    {
+        Session.UserName = registration.Name;
+        Session.Email = registration.Email;
+        Attendance.Register("Tech Summit 2025", registration.Name, registration.Email);
+        submitted = true;
+
+        // Save to session or attendance tracker
+    }
+
+    public class RegistrationModel
+    {
+        [Required(ErrorMessage = "Name is required")]
+        public string Name { get; set; } = string.Empty;
+
+        [Required(ErrorMessage = "Email is required")]
+        [EmailAddress(ErrorMessage = "Invalid email format")]
+        public string Email { get; set; } = string.Empty;
+    }
+}
